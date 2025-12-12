@@ -1,42 +1,40 @@
 import sys
-sys.setrecursionlimit(300000)
+input = sys.stdin.readline
 
-n, m = map(int, input("Add meg a szintek és teleportok számát (pl. 5 6): ").split())
+n, m = map(int, input().split())
 
-szomszed = [[] for _ in range(n + 1)]
-be = [0] * (n + 1)
-ki = [0] * (n + 1)
+adj = [[] for _ in range(n + 1)]
+indeg = [0] * (n + 1)
+outdeg = [0] * (n + 1)
 
-print("Add meg a teleportokat (pl. 1 2):")
 for _ in range(m):
     a, b = map(int, input().split())
-    szomszed[a].append(b)
-    ki[a] += 1
-    be[b] += 1
+    adj[a].append(b)
+    outdeg[a] += 1
+    indeg[b] += 1
 
-if ki[1] - be[1] != 1 or be[n] - ki[n] != 1:
+if outdeg[1] - indeg[1] != 1 or indeg[n] - outdeg[n] != 1:
     print("IMPOSSIBLE")
     sys.exit()
 
 for i in range(2, n):
-    if be[i] != ki[i]:
+    if indeg[i] != outdeg[i]:
         print("IMPOSSIBLE")
         sys.exit()
 
-útvonal = []
-mutato = [0] * (n + 1)
+stack = [1]
+path = []
 
-def bejár(v):
-    while mutato[v] < len(szomszed[v]):
-        u = szomszed[v][mutato[v]]
-        mutato[v] += 1
-        bejár(u)
-    útvonal.append(v)
+while stack:
+    v = stack[-1]
+    if adj[v]:
+        stack.append(adj[v].pop())
+    else:
+        path.append(stack.pop())
 
-bejár(1)
-útvonal.reverse()
+path.reverse()
 
-if len(útvonal) != m + 1 or útvonal[-1] != n:
+if len(path) != m + 1 or path[-1] != n:
     print("IMPOSSIBLE")
 else:
-    print(" ".join(map(str, útvonal)))
+    print(" ".join(map(str, path)))
