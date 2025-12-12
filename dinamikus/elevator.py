@@ -1,9 +1,9 @@
-n = int(input("Add meg az emberek számát (n): "))
-x = int(input("Add meg a lift maximális teherbírását (x): "))
-w = list(map(int, input(f"Add meg a {n} ember súlyát szóközzel elválasztva: ").split()))
+n, x = map(int, input().split())
+w = list(map(int, input().split()))
 
 dp = [(n + 1, 0)] * (1 << n)
 dp[0] = (1, 0)
+
 for mask in range(1 << n):
     for i in range(n):
         if mask & (1 << i):
@@ -15,7 +15,6 @@ for mask in range(1 << n):
             else:
                 new = (rides + 1, w[i])
 
-            if new < dp[mask]:
-                dp[mask] = new
+            dp[mask] = min(dp[mask], new)
 
-print(f"\nA minimális liftmenetek száma: {dp[(1 << n) - 1][0]}")
+print(dp[(1 << n) - 1][0])
